@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="chart.js"></script>
+    <title>Demo</title>
+</head>
+
+<body>
+    <div>
+        <div>
+            <form class="addDevice">
+                Input your device key:
+                <input id="inputDeviceKey" class="inputDeviceKey" type="text" name="DeviceKey" placeholder="Device key"
+                    value="">
+                <button id="btnDKey" class="btnDKey" type="button">Add device</button>
+            </form>
+        </div>
+        <div class="remoteOption"> Remote Control
+            <div class="remotebtn">
+                <div class="state">
+                    Divice Status:
+                    <p id="status" class="diviceStatus">Device not connected!</p>
+                </div>
+                <button id="btnStart" class="btnStart" type="button">START</button>
+                <button id="btnStop" class="btnStop" type="button">STOP</button>
+            </div>
+        </div>
+        <p style="color: blanchedalmond; margin-left: 20px;">Blood Pressure Chart</p>
+
+        <div id="chartContainer" class="chart"></div>
+        <div class="dataOption">
+            <button id="btnData" class="btnData" type="button">Blood pressure database</button>
+        </div>
+
+    </div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+
+</html>

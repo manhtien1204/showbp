@@ -1,0 +1,123 @@
+
+
+body{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    margin: 5px;
+    font-family: sans-serif;
+    background: rgb(3, 0, 27);
+}
+.addDevice{
+    color: blanchedalmond;
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-bottom: 20px;
+}
+.inputDeviceKey{
+    height: 15px;
+    width: 200px;
+    overflow: hidden;
+    font-size: 15px;
+    padding: 8px 0;
+    margin-left: 10px;
+    margin-right: 10px;
+    background: none;
+    color: white;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #37f5d0;
+}
+.inputDeviceKey:focus{
+    border-bottom: 1px solid #37f550;
+}
+.btnDKey{
+    width: 100px;
+    background: none;
+    border: 2px solid #37f5d0;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    margin: 12px 0;
+}
+.remoteOption{
+    height: 200px;
+    width: 100%;
+    color: blanchedalmond;
+    margin: 20px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    border-top: 1px solid #a937f5;
+    border-bottom: 1px solid #a937f5;
+}
+.remotebtn{
+    height: 150px;
+    width: 50%;
+    left: 25%;
+    color: blanchedalmond;
+    padding-top: 10px;
+    position: absolute;
+}
+.btnStart{
+    height: 30px;
+    width: 100%;
+    background: none;
+    border: 2px solid #47f537;
+    color: white;
+    cursor: pointer;
+    margin-top: 40px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.btnStop{
+    height: 30px;
+    width: 100%;
+    background: none;
+    border: 2px solid #f53766;
+    color: white;
+    padding: 3px;
+    cursor: pointer;
+    margin-top: 8px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.state{
+    height: 30px;
+    width: 100%;
+    left: 5%;
+    margin-top: 2px;
+    text-align: center;
+}
+.diviceStatus{
+    margin-top: 5px;
+    width: 100%;
+    font-size: 21px;
+    text-align: center;
+}
+.chart{
+    height: 300px;
+    width: 100%;
+    color: blanchedalmond;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+.dataOption{
+    height: 30px;
+    width: 100%;
+    color: blanchedalmond;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 30px;
+}
+.btnData{
+    width: 300px;
+    background: none;
+    border: 2px solid #37f5d0;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
