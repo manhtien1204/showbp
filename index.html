@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <!-- import jquery library -->
+    <script src="http://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <!-- import paho MQTT library -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script src="app.js"></script>
     <script src="chart.js"></script>
     <title>Demo</title>
 </head>
@@ -16,16 +22,17 @@
                 Input your device key:
                 <input id="inputDeviceKey" class="inputDeviceKey" type="text" name="DeviceKey" placeholder="Device key"
                     value="">
-                <button id="btnDKey" class="btnDKey" type="button">Add device</button>
+                <button id="btnDKey" class="btnDKey" type="button" onclick="">Add device</button>
             </form>
         </div>
         <div class="remoteOption"> Remote Control
             <div class="remotebtn">
                 <div class="state">
-                    Divice Status:
-                    <p id="status" class="diviceStatus">Device not connected!</p>
+                    Device Status:
+                    <!--<p id="Destatus" class="diviceStatus">Device not connected!</p>-->
+                    <div class="diviceStatus" id = "Destatus"></div>
                 </div>
-                <button id="btnStart" class="btnStart" type="button">START</button>
+                <button id="btnStart" class="btnStart" type="button" onclick=myButtonWasClicked()>START</button>
                 <button id="btnStop" class="btnStop" type="button">STOP</button>
             </div>
         </div>
@@ -37,7 +44,7 @@
         </div>
 
     </div>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
 </body>
 
 </html>
