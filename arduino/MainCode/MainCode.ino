@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include<Wire.h>
 SoftwareSerial mySerial(12, 13); //Define PIN12 & PIN13 as software UART
 
 const int interrupt0 = 0; // Khai bao ngat
@@ -14,7 +15,11 @@ int value; // gia tri doc bien tro
 int ManualRadial = 0; // Bien gia tri Manual
 int PositionMax =0; // vi tri goc lon nhat tu chan tin hieu
 int p; // bien dem 
-int delaytime = 0; // thoi gian cho dong co quay xong
+int delaytime = 0; // thoi gian cho dong co quay 
+
+//I2C variable
+int recCommad =0; // Start = 1, stop = 0
+int maxRad = 5;
 
 void setup() {
   attachInterrupt(interrupt0, int_, FALLING); // khai bao ngat
@@ -27,12 +32,20 @@ void setup() {
 
   mySerial.begin(19200);   // Dat gia tri tan so cho giao tiep UART voi Driver
   Serial.begin(9600);// Dat gia tri tan so cho giao tiep UART voi may tinh
+
+  // khoi tao I2C
+ Wire.begin(8);                /* join i2c bus with address 8 */
+ Wire.onReceive(receiveEvent); /* register receive event */
+ Wire.onRequest(requestEvent); /* register request event */
+ Serial.begin(9600);           /* start serial for debug */
 }
 
 void loop() 
 {
   int bntA_M = digitalRead(autoMode); // Doc tin hieu cong tac Auto - Manual
   int bntS_A = digitalRead(Syn);// Doc tin hieu cong tac dong bo - bat dong bo
+
+  //maxRad = PositionMax*0.36;
   
   if(bntA_M == LOW) // Neu chan tin hieu autoMode o muc thap thi goi ham dieu khien manual
   {
@@ -49,16 +62,32 @@ void loop()
       AsynControl(); // Ham tu dong bat dong bo
     }
   }
+  
 }
+
+// I2C function 
+void receiveEvent(int howMany) {
+  recCommad = Wire.read();
+  Serial.print(SS);
+  Serial.println();             /* to newline */
+}
+void requestEvent() {
+ Wire.write(maxRad);
+ maxRad = 0;
+}
+
 void AsynControl() // tu dong bat dong bo
 {
   p = pulse; // lay gia tri xung dem duoc
-  while(p > 56) // chay vong lap neu p>56 dung de giu cho dong co khong quay truoc khi chan tin hieu ve vi tri cu
+  while(p > 56) // chay vong lap neu p > 56 dung de giu cho dong co khong quay truoc khi chan tin hieu ve vi tri cu
   {
     p = pulse; // lay gia tri xung dem duoc
     if(PositionMax < p) PositionMax = p; // tim vi tri lon nhat cua chan tin hieu
-    if(p > 336) PositionMax = 336; //gia tri lon goc lon nhat
-    Serial.println(PositionMax); 
+    if(p > 336) {
+      PositionMax = 336; //gia tri lon goc lon nhat
+      maxRad = PositionMax*0.36;
+    }
+    //Serial.println(PositionMax); 
   }
   delaytime = PositionMax*13;
   //Serial.println(delaytime);
