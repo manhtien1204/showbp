@@ -1,6 +1,7 @@
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <Wire.h>
 
 const char* ssid = "Manh Tien";
 const char* password = "12041996";
@@ -12,12 +13,9 @@ const char* Device_client_ID_01 = "ESPdemo01";
 int adc_value = A0;
 int outputValue = 0;
 int count = 0;
-//const char bpm;
 char bpm_pt;
-
-
 unsigned long previousMillis = 0;     
-const long interval = 10000;  
+const long interval = 10000;
 
 
 WiFiClient WIFI_CLIENT;
@@ -27,7 +25,10 @@ PubSubClient MQTT_CLIENT;
 
 void setup() {
   // Initialize the serial port
-  Serial.begin(115200);
+  Serial.begin(9600);
+
+  //Initialize I2C pin
+  Wire.begin(D1, D2);
 
   // Attempt to connect to a specific access point
   WiFi.begin(ssid, password);
@@ -36,10 +37,11 @@ void setup() {
   while (WiFi.status() != WL_CONNECTED) {
       delay(500);
   }
-
   // Print the IP address of your module
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+
+  TransToAr(1);
 }
 
 void myMessageArrived(char* topic, byte* payload, unsigned int length) {
@@ -48,7 +50,6 @@ void myMessageArrived(char* topic, byte* payload, unsigned int length) {
   for (unsigned int i=0; i< length; i++) {
     message = message + (char)payload[i];
   }
-   
   // Print the message to the serial port
   Serial.println(message);
 }
@@ -80,23 +81,37 @@ void reconnect() {
 void readSensor(){
   
   adc_value = analogRead(A0);
-  Serial.println(adc_value);
+//  Serial.println(adc_value);
   if (adc_value == 185) {
     count++;
     delay(20);
   }
   bpm_pt = char(count);
-  Serial.print("count: ");
-  Serial.println(count);
-  delay(20);
+//  Serial.print("count: ");
+//  Serial.println(count);
+  //delay(20);
+  
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
-   
     MQTT_CLIENT.publish("deviceStatus/iotDevice/from_esp", &bpm_pt);
     delay(50);
     count = 0;
   }
+}
+
+void TransToAr(int OnOff){
+  Wire.beginTransmission(8); /* begin with device address 8 */
+  Wire.write(OnOff);  /* sends hello string */
+  Wire.endTransmission();    /* stop transmitting */
+}
+
+int RequestFromAr(){
+  Wire.requestFrom(8,16); /* request & read data of size 13 from slave */
+  int x = Wire.read();
+  Serial.println(x);
+  delay(1);
+  return x;
 }
 
 void loop() {
@@ -106,8 +121,11 @@ void loop() {
     // If we're not, attempt to reconnect
     reconnect();
   }
-   
-   readSensor();
+  
+  //TransToAr(1);
+  RequestFromAr();
+  
+  readSensor();
 
   MQTT_CLIENT.loop();
 }

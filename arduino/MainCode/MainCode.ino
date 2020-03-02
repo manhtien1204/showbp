@@ -18,8 +18,8 @@ int p; // bien dem
 int delaytime = 0; // thoi gian cho dong co quay 
 
 //I2C variable
-int recCommad =0; // Start = 1, stop = 0
-int maxRad = 5;
+int recCommand =0; // Start = 1
+int maxRad = 0;
 
 void setup() {
   attachInterrupt(interrupt0, int_, FALLING); // khai bao ngat
@@ -31,7 +31,6 @@ void setup() {
   pinMode(Syn, INPUT_PULLUP); // Khai bao chan cong tac dong bo - bat dong bo 
 
   mySerial.begin(19200);   // Dat gia tri tan so cho giao tiep UART voi Driver
-  Serial.begin(9600);// Dat gia tri tan so cho giao tiep UART voi may tinh
 
   // khoi tao I2C
  Wire.begin(8);                /* join i2c bus with address 8 */
@@ -45,21 +44,24 @@ void loop()
   int bntA_M = digitalRead(autoMode); // Doc tin hieu cong tac Auto - Manual
   int bntS_A = digitalRead(Syn);// Doc tin hieu cong tac dong bo - bat dong bo
 
-  //maxRad = PositionMax*0.36;
-  
-  if(bntA_M == LOW) // Neu chan tin hieu autoMode o muc thap thi goi ham dieu khien manual
+  maxRad = PositionMax*0.36;
+//  Serial.println(maxRad);
+  if(recCommand == 1)
   {
-    ManControl(); // ham dieu khien manual
-  } 
-  else  //Neu chan tin hieu khong o muc thap thi chay che do auto
-  {
-    if(bntS_A == LOW) // Neu chan tin hieu Syn o muc thap thi chay che do Tu dong Dong bo
+    if(bntA_M == LOW) // Neu chan tin hieu autoMode o muc thap thi goi ham dieu khien manual
     {
-      SynControl(); //Ham tu dong dong bo
-    }
-    else  // Neu chan tin hieu Syn khong o muc thap thi chay che do Tu dong Bat dong bo
+      ManControl(); // ham dieu khien manual
+    } 
+    else  //Neu chan tin hieu khong o muc thap thi chay che do auto
     {
-      AsynControl(); // Ham tu dong bat dong bo
+      if(bntS_A == LOW) // Neu chan tin hieu Syn o muc thap thi chay che do Tu dong Dong bo
+      {
+        SynControl(); //Ham tu dong dong bo
+      }
+      else  // Neu chan tin hieu Syn khong o muc thap thi chay che do Tu dong Bat dong bo
+      {
+        AsynControl(); // Ham tu dong bat dong bo
+      }
     }
   }
   
@@ -67,13 +69,12 @@ void loop()
 
 // I2C function 
 void receiveEvent(int howMany) {
-  recCommad = Wire.read();
-  Serial.print(SS);
-  Serial.println();             /* to newline */
+  recCommand = Wire.read();
+  Serial.println(recCommand);
+  //Serial.println();             /* to newline */
 }
 void requestEvent() {
  Wire.write(maxRad);
- maxRad = 0;
 }
 
 void AsynControl() // tu dong bat dong bo
@@ -85,10 +86,12 @@ void AsynControl() // tu dong bat dong bo
     if(PositionMax < p) PositionMax = p; // tim vi tri lon nhat cua chan tin hieu
     if(p > 336) {
       PositionMax = 336; //gia tri lon goc lon nhat
-      maxRad = PositionMax*0.36;
+      
     }
-    //Serial.println(PositionMax); 
+    maxRad = PositionMax*0.36;
+    Serial.println(maxRad);
   }
+  //Serial.println(maxRad);
   delaytime = PositionMax*13;
   //Serial.println(delaytime);
   Auto_TransPos(PositionMax); // ham gui tin hieu cho dong co chay den vi tri lon nhat
@@ -100,7 +103,7 @@ void AsynControl() // tu dong bat dong bo
 void SynControl() // tu dong dong bo
 { 
   p = pulse;// lay gia tri xung dem duoc
-  Serial.println(p); 
+  //Serial.println(p); 
   Auto_TransPos(p);  // ham gui tin hieu cho dong co chay den vi tri co so xung p
 }
 
@@ -164,7 +167,7 @@ void ManControl() // Ham dieu khien bang tay
 {
   value = analogRead(A0); // doc tin hieu bien tro
   ManualRadial = map(value,0,1023,0,100); // chia tin hieu bien tro thanh tu 0 - 100
-  Serial.println(ManualRadial); // in gia tri len desktop
+  //Serial.println(ManualRadial); // in gia tri len desktop
   if( ManualRadial > 55) // Neu gia tri ManualRadial lon hon 55 thi cho dong co quay nguoc chieu kim dong ho
   {
     //Serial.println("quay TRAI");
