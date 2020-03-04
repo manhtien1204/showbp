@@ -30,21 +30,25 @@
                 <div class="state">
                     Device Status:
                     <!--<p id="Destatus" class="diviceStatus">Device not connected!</p>-->
-                    <div class="diviceStatus" id = "Destatus"></div>
+                    <div class="diviceStatus" id="Destatus"></div>
                 </div>
                 <button id="btnStart" class="btnStart" type="button" onclick=myButtonWasClicked()>START</button>
                 <button id="btnStop" class="btnStop" type="button">STOP</button>
             </div>
         </div>
-        <p style="color: blanchedalmond; margin-left: 20px;">Blood Pressure Chart</p>
+        <p style="color: blanchedalmond; margin-left: 20px;">Heartbeat and Rotation Chart</p>
 
         <div id="chartContainer" class="chart"></div>
         <div class="dataOption">
-            <button id="btnData" class="btnData" type="button">Blood pressure database</button>
+            <button id="btnData" class="btnData" type="button">Heartbeat and Rotation database</button>
+        </div>
+        <div id="showJson" style="color: blanchedalmond; margin: 20px;">
+
         </div>
 
     </div>
-
+    <script src="app.js"></script>
+    <script src="chart.js"></script>
 </body>
 
 </html>

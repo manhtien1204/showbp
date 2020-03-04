@@ -1,4 +1,7 @@
 
+var dataFromEsp;
+var beatpermin;
+var rotation;
 
 // Generate a new random MQTT client id on each page load
 var MQTT_CLIENT_ID = "iot_web_" + Math.floor((1 + Math.random()) * 0x10000000000).toString(16);
@@ -29,18 +32,19 @@ function UdateDeviceStatus() {
 
 // This is the function which handles subscribing to topics after a connection is made
 function myClientConnected() {
-    MQTT_CLIENT.subscribe("deviceStatus/iotDevice/from_esp");
+    MQTT_CLIENT.subscribe("data/iotDevice/from_esp");
 }
 
 // This is the function which handles received messages
 function myMessageArrived(message) {
     // Get the payload
     var messageBody = message.payloadString;
-    //Create a new HTML element wrapping the message payload
-    var messageHTML = $("<p>" + messageBody + "</p>");
-    // Insert it inside the ```id=updateMe``` element above everything else that is there 
-    $("Destatus").prepend(messageHTML);
-    $("Destatus").text(messageHTML);
-    document.getElementById("Destatus").innerHTML = messageBody;
+    //console.log(messageBody);
+    dataFromEsp = messageBody;
+    var jsonObj = JSON.parse(dataFromEsp);
+    beatpermin = jsonObj.BPM;
+    rotation = jsonObj.REV;
+    document.getElementById("Destatus").innerHTML = jsonObj.STS;
+    //document.getElementById("showJson").innerHTML = dataFromEsp;
 };
 
