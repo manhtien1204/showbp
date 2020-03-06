@@ -2,6 +2,10 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 #include <Wire.h>
+#include <ArduinoJson.h>
+#include <Ticker.h>
+
+
 
 const char* ssid = "Manh Tien";
 const char* password = "12041996";
@@ -13,15 +17,25 @@ const char* Device_client_ID_01 = "ESPdemo01";
 int adc_value = A0;
 int outputValue = 0;
 int count = 0;
-char bpm_pt;
+char bpm;
 unsigned long previousMillis = 0;     
 const long interval = 10000;
+char* sts = "Device Connected";
 
+
+int rev = 0;
 
 WiFiClient WIFI_CLIENT;
 PubSubClient MQTT_CLIENT;
+Ticker blinker;
 
 #define LIGHT_SENSOR A0
+
+
+void ICACHE_RAM_ATTR onTimerISR(){
+    handleRoot();
+    timer1_write(600000*5000);//12us
+}
 
 void setup() {
   // Initialize the serial port
@@ -40,8 +54,14 @@ void setup() {
   // Print the IP address of your module
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
-
   TransToAr(1);
+
+  //Initialize Ticker every 0.5s
+    timer1_attachInterrupt(onTimerISR);
+    timer1_enable(TIM_DIV16, TIM_EDGE, TIM_SINGLE);
+    timer1_write(600000*5000); //120000 us
+
+  
 }
 
 void myMessageArrived(char* topic, byte* payload, unsigned int length) {
@@ -49,6 +69,19 @@ void myMessageArrived(char* topic, byte* payload, unsigned int length) {
   String message = "";
   for (unsigned int i=0; i< length; i++) {
     message = message + (char)payload[i];
+  }
+
+  if(message == "1"){
+    TransToAr(1);
+    sts = "Device Running";
+  }
+  else if(message == "0"){
+    TransToAr(0);
+    sts = "Device Stopping";
+  }
+  else{
+    TransToAr(1);
+    sts = "Device Running";
   }
   // Print the message to the serial port
   Serial.println(message);
@@ -86,18 +119,7 @@ void readSensor(){
     count++;
     delay(20);
   }
-  bpm_pt = char(count);
-//  Serial.print("count: ");
-//  Serial.println(count);
-  //delay(20);
-  
-  unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    MQTT_CLIENT.publish("deviceStatus/iotDevice/from_esp", &bpm_pt);
-    delay(50);
-    count = 0;
-  }
+  bpm = count;
 }
 
 void TransToAr(int OnOff){
@@ -114,18 +136,39 @@ int RequestFromAr(){
   return x;
 }
 
-void loop() {
+void handleRoot() {  
+
+  char Jbuffer[200];
   
+  // Allocate JsonBuffer
+  // Use arduinojson.org/assistant to compute the capacity.
+  StaticJsonDocument<500> jsonBuffer;
+
+  // Create the root object
+  DynamicJsonDocument doc(1024);
+
+  doc["STS"] = sts;
+  doc["BPM"] = bpm; //Put Sensor value
+  doc["REV"] = rev; //Reads Flash Button Status
+
+  serializeMsgPack(doc, Jbuffer);
+  size_t n = serializeJson(doc, Jbuffer);
+  MQTT_CLIENT.publish("data/iotDevice/from_esp", Jbuffer);
+  count = 0;
+  
+}
+
+void loop() {
   // Check if we're connected to the MQTT broker
   if (!MQTT_CLIENT.connected()) {
     // If we're not, attempt to reconnect
     reconnect();
   }
-  
-  //TransToAr(1);
-  RequestFromAr();
-  
+
+  //goc quay
+  rev = RequestFromAr();
   readSensor();
+  //handleRoot();
 
   MQTT_CLIENT.loop();
 }
