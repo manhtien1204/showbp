@@ -32,18 +32,31 @@
                     <!--<p id="Destatus" class="diviceStatus">Device not connected!</p>-->
                     <div class="diviceStatus" id="Destatus"></div>
                 </div>
-                <button id="btnStart" class="btnStart" type="button" onclick=myButtonWasClicked()>START</button>
-                <button id="btnStop" class="btnStop" type="button">STOP</button>
+                <button id="btnStart" class="btnStart" type="button" onclick="StartDevice()">START</button>
+                <button id="btnStop" class="btnStop" type="button" onclick="StopDevice()">STOP</button>
             </div>
         </div>
         <p style="color: blanchedalmond; margin-left: 20px;">Heartbeat and Rotation Chart</p>
 
         <div id="chartContainer" class="chart"></div>
-        <div class="dataOption">
-            <button id="btnData" class="btnData" type="button">Heartbeat and Rotation database</button>
+        <div class="DataTable">
+            <p>Data table</p>
+            <table style="width:100%">
+                <tr>
+                    <th>Time</th>
+                    <th>Rotation</th>
+                    <th>Heartbeat</th>
+                </tr>
+            </table>
+            <div class="scrolTable">
+                <table id="myTable" class="DataTable" style="width:100%">
+
+                </table>
+            </div>
+
+            <br>
         </div>
         <div id="showJson" style="color: blanchedalmond; margin: 20px;">
-
         </div>
 
     </div>

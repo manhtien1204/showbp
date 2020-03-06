@@ -16,18 +16,25 @@ MQTT_CLIENT.connect({ onSuccess: myClientConnected });
 MQTT_CLIENT.onMessageArrived = myMessageArrived;
 
 // This is the function which handles button clicks
-function myButtonWasClicked() {
+function StartDevice() {
     // create a new MQTT message with a specific payload
-    var mqttMessage = new Paho.MQTT.Message("Hello from website");
+    var mqttMessage = new Paho.MQTT.Message("1");
     // Set the topic it should be published to
     mqttMessage.destinationName = "controlsignal/iotDevice/from_web";
     // Publish the message
     MQTT_CLIENT.send(mqttMessage);
+
 }
 
 // this is updating device status function
-function UdateDeviceStatus() {
-    document.getElementById("Destatus").innerHTML = "hello world!";
+function StopDevice() {
+    // create a new MQTT message with a specific payload
+    var mqttMessage = new Paho.MQTT.Message("0");
+    // Set the topic it should be published to
+    mqttMessage.destinationName = "controlsignal/iotDevice/from_web";
+    // Publish the message
+    MQTT_CLIENT.send(mqttMessage);
+
 }
 
 // This is the function which handles subscribing to topics after a connection is made
@@ -35,6 +42,17 @@ function myClientConnected() {
     MQTT_CLIENT.subscribe("data/iotDevice/from_esp");
 }
 
+function updateTable(term_bpm,term_rot) {
+    var table = document.getElementById("myTable");
+    var row = table.insertRow(0);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(1);
+    var Timedata =new Date()
+    cell1.innerHTML = Timedata.toString();
+    cell2.innerHTML = term_bpm;
+    cell3.innerHTML = term_rot;
+}
 // This is the function which handles received messages
 function myMessageArrived(message) {
     // Get the payload
@@ -44,6 +62,7 @@ function myMessageArrived(message) {
     var jsonObj = JSON.parse(dataFromEsp);
     beatpermin = jsonObj.BPM;
     rotation = jsonObj.REV;
+    updateTable(beatpermin,rotation)
     document.getElementById("Destatus").innerHTML = jsonObj.STS;
     //document.getElementById("showJson").innerHTML = dataFromEsp;
 };

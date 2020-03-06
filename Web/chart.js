@@ -26,7 +26,8 @@ window.onload = function () {
   
         for (var j = 0; j < count; j++) {
             //yVal = yVal + Math.round(5 + Math.random() * (-5 - 5));
-            yVal = beatpermin;
+           // yVal = beatpermin;
+            yVal = rotation;
             dps.push({
                 x: xVal,
                 y: yVal
