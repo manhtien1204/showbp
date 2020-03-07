@@ -3,9 +3,6 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <ArduinoJson.h>
-#include <Ticker.h>
-
-
 
 const char* ssid = "Manh Tien";
 const char* password = "12041996";
@@ -17,25 +14,17 @@ const char* Device_client_ID_01 = "ESPdemo01";
 int adc_value = A0;
 int outputValue = 0;
 int count = 0;
-char bpm;
+int bpm;
 unsigned long previousMillis = 0;     
 const long interval = 10000;
-char* sts = "Device Connected";
-
+char* sts = "Device Connected";       
 
 int rev = 0;
 
 WiFiClient WIFI_CLIENT;
 PubSubClient MQTT_CLIENT;
-Ticker blinker;
 
 #define LIGHT_SENSOR A0
-
-
-void ICACHE_RAM_ATTR onTimerISR(){
-    handleRoot();
-    timer1_write(600000*5000);//12us
-}
 
 void setup() {
   // Initialize the serial port
@@ -55,13 +44,6 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   TransToAr(1);
-
-  //Initialize Ticker every 0.5s
-    timer1_attachInterrupt(onTimerISR);
-    timer1_enable(TIM_DIV16, TIM_EDGE, TIM_SINGLE);
-    timer1_write(600000*5000); //120000 us
-
-  
 }
 
 void myMessageArrived(char* topic, byte* payload, unsigned int length) {
@@ -70,7 +52,6 @@ void myMessageArrived(char* topic, byte* payload, unsigned int length) {
   for (unsigned int i=0; i< length; i++) {
     message = message + (char)payload[i];
   }
-
   if(message == "1"){
     TransToAr(1);
     sts = "Device Running";
@@ -112,14 +93,24 @@ void reconnect() {
 }
 
 void readSensor(){
-  
   adc_value = analogRead(A0);
-//  Serial.println(adc_value);
-  if (adc_value == 185) {
+  //Serial.println(adc_value);
+
+  unsigned long currentMillis = millis();
+  
+  if (adc_value >= 100) {
     count++;
     delay(20);
   }
   bpm = count;
+  Serial.println(bpm);
+
+  if (currentMillis - previousMillis >= interval) {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+    handleRoot();
+
+  }
 }
 
 void TransToAr(int OnOff){
@@ -131,7 +122,7 @@ void TransToAr(int OnOff){
 int RequestFromAr(){
   Wire.requestFrom(8,16); /* request & read data of size 13 from slave */
   int x = Wire.read();
-  Serial.println(x);
+  //Serial.println(x);
   delay(1);
   return x;
 }

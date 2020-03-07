@@ -60,7 +60,7 @@ function myMessageArrived(message) {
     //console.log(messageBody);
     dataFromEsp = messageBody;
     var jsonObj = JSON.parse(dataFromEsp);
-    beatpermin = jsonObj.BPM;
+    beatpermin = jsonObj.BPM - 380;
     rotation = jsonObj.REV;
     updateTable(beatpermin,rotation)
     document.getElementById("Destatus").innerHTML = jsonObj.STS;

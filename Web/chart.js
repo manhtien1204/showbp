@@ -17,7 +17,7 @@ window.onload = function () {
   
     var xVal = 0;
     var yVal = 100;
-    var updateInterval = 1000;
+    var updateInterval = 10000;
     var dataLength = 20; // number of dataPoints visible at any point
   
     var updateChart = function (count) {
@@ -27,7 +27,7 @@ window.onload = function () {
         for (var j = 0; j < count; j++) {
             //yVal = yVal + Math.round(5 + Math.random() * (-5 - 5));
            // yVal = beatpermin;
-            yVal = rotation;
+            yVal = beatpermin;
             dps.push({
                 x: xVal,
                 y: yVal
